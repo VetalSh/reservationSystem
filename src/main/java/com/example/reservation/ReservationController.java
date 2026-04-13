@@ -44,7 +44,7 @@ public class ReservationController {
   @GetMapping
   public ResponseEntity<List<Reservation>> getAllReservations() {
     log.info("Called getAllReservation");
-    return ResponseEntity.ok(reservationService.getAllReservations());
+    return ResponseEntity.ok(reservationService.findAllReservation());
   }
 
   @PostMapping
