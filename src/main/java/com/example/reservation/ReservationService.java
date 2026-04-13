@@ -1,12 +1,17 @@
 package com.example.reservation;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 public class ReservationService {
+
+    private static final Logger log = LoggerFactory.getLogger(ReservationService.class);
     private final ReservationRepository repository;
     private final ReservationMapper mapper;
 
@@ -77,11 +82,13 @@ public class ReservationService {
         return mapper.toDomain(updatedReservation);
     }
 
-    public void deleteReservation(Long id) {
+    @Transactional
+    public void cancelReservation(Long id) {
         if (!repository.existsById(id)) {
             throw new EntityNotFoundException("Not found reservation by id = " + id);
         }
-        repository.deleteById(id);
+        repository.setStatus(id, ReservationStatus.CANCELLED);
+        log.info("Successfully canceled reservation: id={}", id);
     }
 
     public Reservation approveReservation(Long id) {
