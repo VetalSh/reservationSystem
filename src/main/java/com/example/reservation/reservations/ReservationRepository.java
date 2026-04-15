@@ -1,5 +1,6 @@
 package com.example.reservation.reservations;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -30,5 +31,16 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate,
             @Param("status") ReservationStatus status
+    );
+
+    @Query("""
+            select r from ReservationEntity r
+             where (:roomId IS NULL OR r.roomId = :roomId)
+               and (:userId IS NULL OR r.userId = :userId)
+             """)
+    List<ReservationEntity> searchAllByFilter(
+            Long roomId,
+            Long userId,
+            Pageable pageable
     );
 }
